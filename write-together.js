@@ -29,20 +29,26 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.list.helpers({
-    documents: function () {
-      return [
-        {"title": "My document"},
-        {"title": "Your document"},
-        {"title": "Their document"}
-      ];
-    }
-  });
+  Template.list.documents = function () {
+    return Documents.find({});
+  };
 }
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
+    if (Documents.find().count() == 0) {
+      Documents.insert({
+        documentID: Math.random().toString().split(".")[1],
+        title: "My Document",
+        content: "This is my document"
+      });
+      Documents.insert({
+        documentID: Math.random().toString().split(".")[1],
+        title: "Another Document",
+        content: "This is another document"
+      });
+    }
   });
 
   // Publish all documents
