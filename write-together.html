@@ -3,6 +3,44 @@
 </head>
 
 <body>
+  {{#if currentDocumentID}}
+    {{> document}}
+  {{else}}
+    {{> list}}
+  {{/if}}
+</body>
+
+<template name="list">
+  <div class="row">
+    <div class="span8 offset1">
+      <h2 class="app-name">Write Together</h2>
+
+      <h4>Saved Documents</h4>
+      <table id="documents" class="table table-hover">
+        <thead>
+          <th>Title</th>
+          <th>Last Changed</th>
+          <th></th>
+        </thead>
+        <tbody>
+        {{#each documents}}
+          {{> document-row}}
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template name="document-row">
+  <tr>
+    <td>{{title}}</td>
+    <td>just now</td>
+    <td></td>
+  </tr>
+</template>
+
+<template name="document">
   <div id="wrap" class="full-screen">
     <div id="title-row" class="row-fluid">
       <div class="span8">
@@ -29,10 +67,4 @@
       </div>
     </div>
   </div>
-</body>
-
-<template name="hello">
-  <h1>Hello World!</h1>
-  {{greeting}}
-  <input type="button" value="Click" />
 </template>
