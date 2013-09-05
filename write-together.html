@@ -3,12 +3,16 @@
 </head>
 
 <body>
-  {{#if currentDocumentID}}
+  {{> root}}
+</body>
+
+<template name="root">
+  {{#if currentDocumentId}}
     {{> document}}
   {{else}}
     {{> list}}
   {{/if}}
-</body>
+</template>
 
 <template name="list">
   <div class="row">
@@ -24,7 +28,7 @@
         </thead>
         <tbody>
         {{#each documents}}
-          {{> document-row}}
+          {{> documentRow}}
         {{/each}}
         </tbody>
       </table>
@@ -32,8 +36,8 @@
   </div>
 </template>
 
-<template name="document-row">
-  <tr>
+<template name="documentRow">
+  <tr class="{{documentID}}">
     <td>{{title}}</td>
     <td>just now</td>
     <td></td>
@@ -44,7 +48,7 @@
   <div id="wrap" class="full-screen">
     <div id="title-row" class="row-fluid">
       <div class="span8">
-        <a href="/write-together/list.html" class="close" data-toggle="tooltip" title="Return to Document List">&times;</a>
+        <a href="#" class="close" data-toggle="tooltip" title="Return to Document List">&times;</a>
         <input id="doc-title" type="text" placeholder="Document title">
         <button id="doc-save" class="btn">Saved</button>
       </div>
