@@ -73,6 +73,14 @@ h2.app-name {
   color: #ccc;
 }
 
+h2.app-name a.btn {
+  text-transform: none;
+  font-weight: normal;
+  float: right;
+  display: block;
+  margin-top: 10px;
+}
+
 .table thead th {
   text-transform: uppercase;
   color: #ccc;

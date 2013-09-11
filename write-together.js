@@ -72,6 +72,22 @@ if (Meteor.isClient) {
     return Documents.find({});
   };
 
+  Template.list.events( {
+    'click a.btn': function (event) {
+      var documentId = Documents.insert(
+        {
+          title: "",
+          content: "",
+          tempTitle: "",
+          tempContent: "",
+          lastSavedAt: ""
+        }
+      );
+
+      Session.set("currentDocumentId", documentId);
+    }
+  });
+
   Template.documentRow.events({
     'click tr' : function (event) {
       Session.set("currentDocumentId", event.currentTarget.className);
@@ -83,16 +99,6 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
-    if (Documents.find().count() == 0) {
-      Documents.insert({
-        title: "My Document",
-        content: "This is my document"
-      });
-      Documents.insert({
-        title: "Another Document",
-        content: "This is another document"
-      });
-    }
   });
 
   // Publish all documents
