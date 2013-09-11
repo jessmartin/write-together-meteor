@@ -42,7 +42,11 @@
 <template name="documentRow">
   <tr class="{{_id}}">
     <td>{{title}}</td>
-    <td>just now</td>
+    <td>
+      <span class='timeago' title='{{lastSavedAt}}'>
+        {{lastSavedAt}}
+      </span>
+    </td>
     <td></td>
   </tr>
 </template>

@@ -32,6 +32,7 @@ if (Meteor.isClient) {
       var properties = {
         title: $('#doc-title').val(),
         content: $('#doc-content').val(),
+        lastSavedAt: new Date().toISOString(),
         saved: true
       };
 
@@ -86,6 +87,10 @@ if (Meteor.isClient) {
       Session.set("currentDocumentId", event.currentTarget.className);
     }
   });
+
+  Template.documentRow.rendered = function () {
+    jQuery("span.timeago").timeago();
+  };
 }
 
 if (Meteor.isServer) {
