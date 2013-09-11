@@ -1,16 +1,4 @@
-// Documents -- {title: String,
-//               content: String}
 Documents = new Meteor.Collection("documents");
-
-Meteor.methods({
-  saveDocument: function(id, properties) {
-    Documents.update(id, {$set: properties}, function(error, document) {
-      if (error) {
-        console.log(error.reason);
-      }
-    });
-  }
-});
 
 if (Meteor.isClient) {
   Deps.autorun(function () {
@@ -18,40 +6,40 @@ if (Meteor.isClient) {
   });
 
   Template.root.currentDocumentId = function () {
-    return Session.get("currentDocumentId") != "" && Session.get("currentDocumentId") != undefined;
+    return Session.get("currentDocumentId") != "" && Session.get("currentDocumentId") !== undefined;
   };
+
+  currentDocumentId = function () {
+    return Session.get("currentDocumentId");
+  }
+
+  saveTempDocument = function () {
+    var properties = {
+      tempTitle: $('#doc-title').val(),
+      tempContent: $('#doc-content').val(),
+      saved: false
+    };
+
+    Documents.update(currentDocumentId(), {$set: properties}, function(error, document) {
+      if (error) { console.log(error.reason); }
+    });
+  }
+
+  // Document Teplate
 
   Template.document.events({
     'click #doc-save' : function () {
-    },
-    'keyup #doc-title' : function () {
-      var currentDocumentId = Session.get("currentDocumentId");
-
       var properties = {
         title: $('#doc-title').val(),
         content: $('#doc-content').val(),
+        saved: true
       };
 
-      Meteor.call('saveDocument', currentDocumentId, properties, function(error, post) {
-        if (error) {
-          console.log(error);
-        }
+      Documents.update(currentDocumentId(), {$set: properties}, function(error, document) {
+        if (error) { console.log(error.reason); }
       });
     },
-    'keyup #doc-content' : function () {
-      var currentDocumentId = Session.get("currentDocumentId");
-
-      var properties = {
-        title: $('#doc-title').val(),
-        content: $('#doc-content').val(),
-      };
-
-      Meteor.call('saveDocument', currentDocumentId, properties, function(error, post) {
-        if (error) {
-          console.log(error);
-        }
-      });
-    },
+    'keyup #doc-title, keyup #doc-content' : saveTempDocument,
     'click a.close' : function () {
       Session.set("currentDocumentId", "");
     }
@@ -59,14 +47,16 @@ if (Meteor.isClient) {
 
   Template.document.helpers({ 
     currentDocument: function () {
-      var currentDocumentId = Session.get("currentDocumentId");
-      var doc = Documents.findOne( {_id: currentDocumentId} );
-      console.log(currentDocumentId);
+      var doc = Documents.findOne( {_id: currentDocumentId()} );
+
       if (doc) {
         return doc;
       }
-    }
+    },
+
   });
+
+  // List Template
 
   Template.list.documents = function () {
     return Documents.find({});
@@ -80,7 +70,8 @@ if (Meteor.isClient) {
           content: "",
           tempTitle: "",
           tempContent: "",
-          lastSavedAt: ""
+          lastSavedAt: "",
+          saved: false
         }
       );
 
@@ -88,20 +79,16 @@ if (Meteor.isClient) {
     }
   });
 
+  // Document Row Template
+
   Template.documentRow.events({
     'click tr' : function (event) {
       Session.set("currentDocumentId", event.currentTarget.className);
     }
   });
-
 }
 
 if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
-
-  // Publish all documents
   Meteor.publish('documents', function () {
     return Documents.find({});
   });
