@@ -2,26 +2,75 @@
 //               content: String}
 Documents = new Meteor.Collection("documents");
 
+Meteor.methods({
+  saveDocument: function(id, properties) {
+    Documents.update(id, {$set: properties}, function(error, document) {
+      if (error) {
+        console.log(error.reason);
+      }
+    });
+  }
+});
+
 if (Meteor.isClient) {
   Deps.autorun(function () {
-    Meteor.subscribe("alldocuments");
+    Meteor.subscribe("documents");
   });
 
   Template.root.currentDocumentId = function () {
-    return Session.get("currentDocumentId") != "";
+    return Session.get("currentDocumentId") != "" && Session.get("currentDocumentId") != undefined;
   };
 
   Template.document.events({
-    'click button' : function () {
+    'click #doc-save' : function () {
     },
-    'keypress #doc-title' : function () {
+    'keyup #doc-title' : function () {
+      var currentDocumentId = Session.get("currentDocumentId");
+
+      var properties = {
+        title: $('#doc-title').val(),
+        content: $('#doc-content').val(),
+      };
+
+      Meteor.call('saveDocument', currentDocumentId, properties, function(error, post) {
+        if (error) {
+          console.log(error);
+        }
+      });
     },
-    'keypress #doc-content' : function () {
+    'keyup #doc-content' : function () {
+      var currentDocumentId = Session.get("currentDocumentId");
+
+      var properties = {
+        title: $('#doc-title').val(),
+        content: $('#doc-content').val(),
+      };
+
+      Meteor.call('saveDocument', currentDocumentId, properties, function(error, post) {
+        if (error) {
+          console.log(error);
+        }
+      });
     },
     'click a.close' : function () {
       Session.set("currentDocumentId", "");
     }
   });
+
+  Template.document.helpers({ 
+    currentDocument: function () {
+      var currentDocumentId = Session.get("currentDocumentId");
+      var doc = Documents.findOne( {_id: currentDocumentId} );
+      console.log(currentDocumentId);
+      if (doc) {
+        return doc;
+      }
+    }
+  });
+
+  Template.list.documents = function () {
+    return Documents.find({});
+  };
 
   Template.documentRow.events({
     'click tr' : function (event) {
@@ -29,9 +78,6 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.list.documents = function () {
-    return Documents.find({});
-  };
 }
 
 if (Meteor.isServer) {
@@ -39,12 +85,10 @@ if (Meteor.isServer) {
     // code to run on server at startup
     if (Documents.find().count() == 0) {
       Documents.insert({
-        documentID: Math.random().toString().split(".")[1],
         title: "My Document",
         content: "This is my document"
       });
       Documents.insert({
-        documentID: Math.random().toString().split(".")[1],
         title: "Another Document",
         content: "This is another document"
       });
@@ -52,7 +96,7 @@ if (Meteor.isServer) {
   });
 
   // Publish all documents
-  Meteor.publish('alldocuments', function () {
+  Meteor.publish('documents', function () {
     return Documents.find({});
   });
 }

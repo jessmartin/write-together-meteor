@@ -37,7 +37,7 @@
 </template>
 
 <template name="documentRow">
-  <tr class="{{documentID}}">
+  <tr class="{{_id}}">
     <td>{{title}}</td>
     <td>just now</td>
     <td></td>
@@ -45,17 +45,19 @@
 </template>
 
 <template name="document">
+  {{#if currentDocument}}
+  {{#with currentDocument}}
   <div id="wrap" class="full-screen">
     <div id="title-row" class="row-fluid">
       <div class="span8">
         <a href="#" class="close" data-toggle="tooltip" title="Return to Document List">&times;</a>
-        <input id="doc-title" type="text" placeholder="Document title">
+        <input id="doc-title" type="text" placeholder="Document title" value="{{title}}">
         <button id="doc-save" class="btn">Saved</button>
       </div>
     </div>
     <div class="row-fluid">
       <div class="span8">
-        <textarea id="doc-content" class="write-together-editor" rows="10" placeholder="Start typing your document here..."></textarea>
+        <textarea id="doc-content" class="write-together-editor" rows="10" placeholder="Start typing your document here...">{{content}}</textarea>
       </div>
       <div class="span4 collaborators">
         <h4 class="collaborator-title">Collaborators</h4>
@@ -67,8 +69,9 @@
             Eric Burns
           </li>
         </ul>
-        <small id="save-id">SAVENAME: <span id="doc-savename">5678</span></small>
       </div>
     </div>
   </div>
+  {{/with}}
+  {{/if}}
 </template>
